@@ -4,6 +4,8 @@ import jinja2
 import argparse
 import re
 from markdown import markdown
+from html import escape
+from urllib.parse import quote
 
 
 def argparser():
@@ -18,13 +20,19 @@ def load_data(filepath):
         return json.load(data_file)
 
 
+def read_from_file(filepath):
+    with open(filepath, encoding='UTF-8') as data_file:
+        return data_file.read()
+
+
 def config_content_ext_change(config):
-    for topic in config['topics']:
-        for article in config['articles']:
+    new_config = config
+    for topic in new_config['topics']:
+        for article in new_config['articles']:
             if topic['slug'] == article['topic']:
                 original_root, original_ext = os.path.splitext(article['source'])
-                article['source'] = '{}.html'.format(original_root)
-    return config
+                article['source'] = escape('{}.html'.format(original_root))
+    return new_config
 
 
 def load_article(path):
@@ -34,7 +42,8 @@ def load_article(path):
 
 def get_article_url(source):
     source_with_dir = os.path.join('pages', source)
-    source = re.sub(r'.md\b', '.html', source_with_dir)
+    original_root, original_ext = os.path.splitext(source_with_dir)
+    source = '{}.{}'.format(original_root, 'html')
     return source
 
 
@@ -44,7 +53,7 @@ def directory_create(path):
 
 
 def compile_page(config, path_to_template, path_to_save):
-    html_page = open(path_to_template, encoding='utf-8').read()
+    html_page = read_from_file(path_to_template)
     template = jinja2.Template(html_page)
     with open(path_to_save, 'w', encoding='utf-8') as f:
         f.write(template.render(info=config))
