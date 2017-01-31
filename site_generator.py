@@ -2,10 +2,7 @@ import json
 import os.path
 import jinja2
 import argparse
-import re
 from markdown import markdown
-from html import escape
-from urllib.parse import quote
 
 
 def argparser():
@@ -31,7 +28,7 @@ def config_content_ext_change(config):
         for article in new_config['articles']:
             if topic['slug'] == article['topic']:
                 original_root, original_ext = os.path.splitext(article['source'])
-                article['source'] = escape('{}.html'.format(original_root))
+                article['source'] = '{}.html'.format(original_root)
     return new_config
 
 
