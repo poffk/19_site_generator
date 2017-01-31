@@ -55,7 +55,7 @@
           <h2>{{topic['title']}}</h2>
               {% for article in info['articles'] %}
               {% if topic['slug'] == article['topic'] %}
-          <a href="{{article['source']|urlencode}}">{{article['title']|e}}</a><br>
+          <a href="{{article['source']}}">{{article['title']|e}}</a><br>
               {% endif %}
               {% endfor %}
         </div>
